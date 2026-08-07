@@ -4,41 +4,40 @@ export default function AboutPage() {
       <h1>About the project</h1>
 
       <p>
-        The Phoneme Activity Builder helps teachers prepare browser-based
-        activities for Speech Pathology students. Teachers can configure an
-        activity, preview it and download it as a standalone HTML file.
+        The Phoneme Activity Builder helps teachers create browser-based
+        learning activities for Speech Pathology students.
       </p>
 
       <h2>Assessment 1 scope</h2>
 
       <p>
-        Assessment 1 focuses on frontend design, usability, accessibility,
-        responsive layout and HTML generation. It does not use a database or
-        dynamically managed word list.
+        This assessment focuses on frontend design, usability, accessibility,
+        responsive layout and standalone HTML generation. It does not use a
+        database or dynamically managed word list.
       </p>
 
       <h2>Phoneme Wordle</h2>
 
       <p>
-        The Wordle tool uses one phoneme-based word. It provides a hint,
-        limited attempts and feedback that displays the English equivalent.
+        The Wordle tool creates a guessing activity using one phoneme-based
+        word, a hint, limited attempts and an English equivalent.
       </p>
 
       <h2>Phoneme Word Search</h2>
 
       <p>
-        The Word Search tool uses approximately five fixed phoneme words and
-        creates a downloadable classroom activity.
+        The Word Search tool creates an activity using five fixed
+        phoneme-based words.
       </p>
 
       <h2>Student details</h2>
 
       <p>
-        <strong>Name:</strong> Your Name
+        <strong>Name:</strong> Tuong An Luu
       </p>
 
       <p>
-        <strong>Student number:</strong> Your Student Number
+        <strong>Student number:</strong> 22640317
       </p>
 
       <h2>How to use the website</h2>

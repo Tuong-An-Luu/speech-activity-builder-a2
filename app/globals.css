@@ -475,3 +475,45 @@ select:focus-visible {
   border: 1px solid var(--border);
   border-radius: 12px;
 }
+
+.content-page h1 {
+  margin: 0 0 24px;
+}
+
+.content-page h2 {
+  margin: 32px 0 12px;
+}
+
+.content-page p {
+  margin: 0 0 16px;
+  line-height: 1.7;
+}
+
+.instruction-video {
+  width: 100%;
+  max-width: 760px;
+  margin-top: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.wordle-tile-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 20px 0;
+}
+
+.wordle-tile {
+  display: grid;
+  place-items: center;
+  min-width: 52px;
+  min-height: 52px;
+  padding: 8px;
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
