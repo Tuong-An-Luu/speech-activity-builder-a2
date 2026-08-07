@@ -1,33 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type Theme = "light" | "dark";
 
-function readCookie(name: string): string | null {
-  const cookie = document.cookie
-    .split("; ")
-    .find((item) => item.startsWith(`${name}=`));
+type ThemeControllerProps = {
+  initialTheme: Theme;
+};
 
-  return cookie
-    ? decodeURIComponent(cookie.split("=")[1])
-    : null;
-}
-
-export default function ThemeController() {
-  const [theme, setTheme] = useState<Theme>("light");
-
-  useEffect(() => {
-    const savedTheme = readCookie("theme");
-
-    if (savedTheme === "light" || savedTheme === "dark") {
-      setTheme(savedTheme);
-      document.documentElement.dataset.theme = savedTheme;
-    }
-  }, []);
+export default function ThemeController({
+  initialTheme,
+}: ThemeControllerProps) {
+  const [theme, setTheme] = useState<Theme>(initialTheme);
 
   function changeTheme(newTheme: Theme) {
     setTheme(newTheme);
+
     document.documentElement.dataset.theme = newTheme;
 
     document.cookie =
