@@ -13,7 +13,6 @@ export function generateWordSearchHtml(
   settings: WordSearchSettings,
 ): string {
   const title = escapeHtml(settings.title);
-  const words = settings.words.map(escapeHtml);
 
   return `<!doctype html>
 <html lang="en">
