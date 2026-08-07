@@ -17,19 +17,31 @@ export default async function RootLayout({
 }>) {
   const cookieStore = await cookies();
   const savedTheme = cookieStore.get("theme")?.value;
-
-  const theme =
-    savedTheme === "dark" ? "dark" : "light";
+  const theme = savedTheme === "dark" ? "dark" : "light";
 
   return (
     <html lang="en" data-theme={theme}>
       <body>
-        <header>
-          <h1>Phoneme Activity Builder</h1>
-          <Navigation />
+        <a className="skip-link" href="#main-content">
+          Skip to main content
+        </a>
+
+        <header className="site-header">
+          <div className="header-inner">
+            <div>
+              <p className="site-title">Phoneme Activity Builder</p>
+              <p className="site-subtitle">
+                Cloud Web Application Assessment 1
+              </p>
+            </div>
+
+            <Navigation />
+          </div>
         </header>
 
-        <main>{children}</main>
+        <main id="main-content" className="page-container">
+          {children}
+        </main>
 
         <Footer />
       </body>

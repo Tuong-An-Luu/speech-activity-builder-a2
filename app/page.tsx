@@ -3,23 +3,42 @@ import Link from "next/link";
 export default function HomePage() {
   return (
     <section>
-      <h1>Phoneme Activity Builder</h1>
+      <div className="hero">
+        <p className="eyebrow">Speech Pathology teaching tool</p>
 
-      <p>
-        Create, preview and download phoneme-based Wordle and Word Search
-        classroom activities for Speech Pathology teaching.
-      </p>
+        <h1>Create phoneme-based classroom activities</h1>
 
-      <div>
-        <h2>Phoneme Wordle</h2>
-        <p>Create an activity using one phoneme-based word.</p>
-        <Link href="/wordle">Create Wordle</Link>
+        <p>
+          Configure, preview and download standalone Wordle and Word Search
+          activities for use in a normal web browser.
+        </p>
       </div>
 
-      <div>
-        <h2>Phoneme Word Search</h2>
-        <p>Create a word search using five phoneme-based words.</p>
-        <Link href="/word-search">Create Word Search</Link>
+      <div className="home-card-grid">
+        <article className="home-card">
+          <h2>Phoneme Wordle</h2>
+
+          <p>
+            Create a guessing activity using one phoneme word, hints, feedback
+            and an English equivalent.
+          </p>
+
+          <Link className="button home-link" href="/wordle">
+            Create a Wordle
+          </Link>
+        </article>
+
+        <article className="home-card">
+          <h2>Phoneme Word Search</h2>
+
+          <p>
+            Create a classroom activity using five fixed phoneme-based words.
+          </p>
+
+          <Link className="button home-link" href="/word-search">
+            Create a Word Search
+          </Link>
+        </article>
       </div>
     </section>
   );

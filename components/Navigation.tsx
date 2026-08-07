@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 const links = [
@@ -13,22 +14,35 @@ const links = [
 
 export default function Navigation() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
-    <nav aria-label="Main navigation">
+    <nav className="main-navigation" aria-label="Main navigation">
       <button
+        className="menu-button"
         type="button"
         aria-expanded={open}
-        aria-controls="main-navigation"
-        onClick={() => setOpen(!open)}
+        aria-controls="navigation-links"
+        onClick={() => setOpen((current) => !current)}
       >
-        Menu
+        <span aria-hidden="true">☰</span>
+        <span>Menu</span>
       </button>
 
-      <ul id="main-navigation">
+      <ul
+        id="navigation-links"
+        className={open ? "navigation-list open" : "navigation-list"}
+      >
         {links.map((link) => (
           <li key={link.href}>
-            <Link href={link.href}>{link.label}</Link>
+            <Link
+              className={pathname === link.href ? "active" : ""}
+              href={link.href}
+              aria-current={pathname === link.href ? "page" : undefined}
+              onClick={() => setOpen(false)}
+            >
+              {link.label}
+            </Link>
           </li>
         ))}
       </ul>
