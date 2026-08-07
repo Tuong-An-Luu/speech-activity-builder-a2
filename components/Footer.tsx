@@ -1,7 +1,7 @@
 export default function Footer() {
   return (
     <footer>
-      <p>Your Full Name — Student ID: Your Student Number</p>
+      <p>Tuong An Luu — Student ID: 22640317</p>
     </footer>
   );
 }

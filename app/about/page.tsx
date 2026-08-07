@@ -15,8 +15,8 @@ export default function AboutPage() {
 
       <h2>Student details</h2>
 
-      <p>Name: Your Full Name</p>
-      <p>Student number: Your Student Number</p>
+      <p>Name: Tuong An Luu</p>
+      <p>Student number: 22640317</p>
     </section>
   );
 }
