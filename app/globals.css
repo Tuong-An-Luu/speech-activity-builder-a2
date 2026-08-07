@@ -98,3 +98,41 @@ body {
   background: #ffffff;
   color: #17202a;
 }
+
+.word-search-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(48px, 1fr));
+  gap: 8px;
+  max-width: 440px;
+  margin-top: 18px;
+}
+
+.word-search-cell {
+  min-height: 56px;
+  padding: 8px;
+  border: 2px solid #64717f;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #17202a;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.word-search-cell:hover,
+.word-search-cell:focus-visible {
+  background: #e9efff;
+  border-color: #3158a6;
+}
+
+@media (max-width: 520px) {
+  .word-search-grid {
+    grid-template-columns: repeat(5, minmax(40px, 1fr));
+    gap: 5px;
+  }
+
+  .word-search-cell {
+    min-height: 46px;
+    font-size: 0.9rem;
+  }
+}
