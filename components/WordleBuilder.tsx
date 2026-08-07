@@ -52,6 +52,122 @@ export default function WordleBuilder() {
   return (
     <div className="builder-layout">
       <section
+        className="builder-panel"
+        aria-labelledby="wordle-settings-heading"
+      >
+        <h2 id="wordle-settings-heading">
+          Wordle settings
+        </h2>
+
+        <label htmlFor="wordle-title">
+          Activity title
+        </label>
+
+        <input
+          id="wordle-title"
+          type="text"
+          value={settings.title}
+          onChange={(event) =>
+            updateSetting("title", event.target.value)
+          }
+        />
+
+        <label htmlFor="phoneme-word">
+          Phoneme word
+        </label>
+
+        <input
+          id="phoneme-word"
+          type="text"
+          value={settings.phonemeWord}
+          onChange={(event) =>
+            updateSetting(
+              "phonemeWord",
+              event.target.value,
+            )
+          }
+        />
+
+        <label htmlFor="english-word">
+          English equivalent
+        </label>
+
+        <input
+          id="english-word"
+          type="text"
+          value={settings.englishWord}
+          onChange={(event) =>
+            updateSetting(
+              "englishWord",
+              event.target.value,
+            )
+          }
+        />
+
+        <label htmlFor="wordle-hint">
+          Phoneme hint
+        </label>
+
+        <input
+          id="wordle-hint"
+          type="text"
+          value={settings.hint}
+          onChange={(event) =>
+            updateSetting(
+              "hint",
+              event.target.value,
+            )
+          }
+        />
+
+        <label htmlFor="wordle-attempts">
+          Number of attempts
+        </label>
+
+        <input
+          id="wordle-attempts"
+          type="number"
+          min="1"
+          max="10"
+          value={settings.attempts}
+          onChange={(event) =>
+            updateSetting(
+              "attempts",
+              Number(event.target.value),
+            )
+          }
+        />
+
+        <label htmlFor="wordle-difficulty">
+          Difficulty
+        </label>
+
+        <select
+          id="wordle-difficulty"
+          value={settings.difficulty}
+          onChange={(event) =>
+            updateSetting(
+              "difficulty",
+              event.target
+                .value as WordleSettings["difficulty"],
+            )
+          }
+        >
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+
+        <button
+          type="button"
+          className="button"
+          onClick={handleGenerate}
+        >
+          Generate Wordle HTML
+        </button>
+      </section>
+
+      <section
         className="preview-panel"
         aria-labelledby="wordle-preview-heading"
       >
@@ -63,17 +179,16 @@ export default function WordleBuilder() {
           className="wordle-tile-row"
           aria-label="Wordle tile preview"
         >
-            {Array.from(
-              settings.phonemeWord.replaceAll("/", ""),
-            ).map((character, index) => (
-              <span
-                className="wordle-tile"
-                key={`${character}-${index}`}
-              >
-                {character}
-              </span>
-            ),
-          )}
+          {Array.from(
+            settings.phonemeWord.replaceAll("/", ""),
+          ).map((character, index) => (
+            <span
+              className="wordle-tile"
+              key={`${character}-${index}`}
+            >
+              {character}
+            </span>
+          ))}
         </div>
 
         <h3>{settings.title}</h3>

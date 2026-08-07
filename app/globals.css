@@ -210,6 +210,73 @@ select:focus-visible {
   border-color: var(--primary);
 }
 
+.word-search-cell.selected {
+  background: var(--hover-surface);
+  border-color: var(--primary);
+  outline: 2px solid var(--primary);
+}
+
+.selection-preview {
+  margin-top: 18px;
+}
+
+.word-search-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 16px 0 24px;
+}
+
+.word-search-controls .button {
+  margin-top: 0;
+}
+
+.secondary-button {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.secondary-button:hover,
+.secondary-button:focus-visible {
+  background: var(--hover-surface);
+}
+
+.secondary-button:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+
+.preview-word-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.preview-word-list li {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+}
+
+.preview-word-list li.found {
+  background: var(--hover-surface);
+  text-decoration: line-through;
+}
+
+.word-search-feedback {
+  min-height: 28px;
+  margin-top: 18px;
+  font-weight: 700;
+}
 /* Responsive layout */
 
 @media (max-width: 760px) {
