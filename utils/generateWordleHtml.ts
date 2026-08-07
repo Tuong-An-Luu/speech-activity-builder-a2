@@ -13,7 +13,6 @@ export function generateWordleHtml(
   settings: WordleSettings,
 ): string {
   const title = escapeHtml(settings.title);
-  const phonemeWord = escapeHtml(settings.phonemeWord);
   const englishWord = escapeHtml(settings.englishWord);
   const hint = escapeHtml(settings.hint);
 
