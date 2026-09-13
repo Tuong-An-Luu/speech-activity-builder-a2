@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum ActivityType {
+  WORDLE
+  WORD_SEARCH
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+model WordList {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String?
+  words       Word[]
+  activities  Activity[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Word {
+  id         Int       @id @default(autoincrement())
+  text       String
+  hint       String?
+  wordListId Int
+  wordList   WordList  @relation(fields: [wordListId], references: [id], onDelete: Cascade)
+  phonemes   Phoneme[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Phoneme {
+  id       Int    @id @default(autoincrement())
+  symbol   String
+  position Int
+  wordId   Int
+  word     Word   @relation(fields: [wordId], references: [id], onDelete: Cascade)
+
+  @@unique([wordId, position])
+}
+
+model Activity {
+  id           Int          @id @default(autoincrement())
+  name         String
+  activityType ActivityType
+  difficulty   Difficulty
+  hintsEnabled Boolean      @default(true)
+
+  gridSize     Int?
+  timerSeconds Int?
+  outputName   String?
+  settingsJson String?
+
+  wordListId Int
+  wordList   WordList @relation(fields: [wordListId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
