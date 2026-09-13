@@ -590,3 +590,13 @@ select option {
   color: #111;
   background-color: #fff;
 }
+
+input,
+textarea {
+  width: 100%;
+  max-width: 100%;
+}
+
+select {
+  max-width: 100%;
+}

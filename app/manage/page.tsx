@@ -335,9 +335,11 @@ export default function ManagePage() {
               Hint
               <br />
               <input
+                type="text"
                 value={wordHint}
                 onChange={(event) => setWordHint(event.target.value)}
                 placeholder="Example: Something seen in the sky"
+                style={{ width: "420px", maxWidth: "100%" }}
               />
             </label>
           </div>
