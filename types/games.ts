@@ -12,5 +12,6 @@ export type WordleSettings = {
 export type WordSearchSettings = {
   title: string;
   words: string[];
+  phonemeCells: string[];
   difficulty: Difficulty;
 };

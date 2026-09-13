@@ -50,7 +50,6 @@ export function generateWordSearchHtml(
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
       gap: 8px;
       margin: 24px 0;
     }
@@ -204,29 +203,21 @@ export function generateWordSearchHtml(
     ></ul>
 
     <p id="feedback" aria-live="polite">
-      Find all five phoneme words.
+      Find all phoneme words.
     </p>
   </main>
 
   <script>
     const targetWords = ${JSON.stringify(settings.words)};
 
-    /*
-      Each target word has deliberately been placed
-      horizontally in one row of the grid.
-    */
-    const gridRows = [
-      ["/θ/", "/ɪ/", "/n/", "/f/", "/ŋ/"],
-      ["/ʃ/", "/ɪ/", "/p/", "/θ/", "/n/"],
-      ["/tʃ/", "/eə/", "/f/", "/ɪ/", "/ŋ/"],
-      ["/s/", "/ɪ/", "/ŋ/", "/ʃ/", "/p/"],
-      ["/f/", "/ɪ/", "/ʃ/", "/tʃ/", "/eə/"]
-    ];
-
-    const gridCells = gridRows.flat();
-
+    const gridCells = ${JSON.stringify(settings.phonemeCells)};
 
     const grid = document.getElementById("grid");
+    const columnCount =
+      Math.ceil(Math.sqrt(gridCells.length));
+
+    grid.style.gridTemplateColumns =
+      "repeat(" + columnCount + ", 1fr)";
     const wordList = document.getElementById("word-list");
     const selectionDisplay =
       document.getElementById("selection");

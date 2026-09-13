@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type {
   Difficulty,
   WordSearchSettings,
@@ -8,7 +8,29 @@ import type {
 import { downloadHtmlFile } from "../utils/downloadFile";
 import { generateWordSearchHtml } from "../utils/generateWordSearchHtml";
 
-const fixedWords = [
+type SavedPhoneme = {
+  id: number;
+  symbol: string;
+  position: number;
+  wordId: number;
+};
+
+type SavedWord = {
+  id: number;
+  text: string;
+  hint: string | null;
+  wordListId: number;
+  phonemes: SavedPhoneme[];
+};
+
+type SavedWordList = {
+  id: number;
+  name: string;
+  description: string | null;
+  words?: SavedWord[];
+};
+
+const defaultWords = [
   "/θɪn/",
   "/ʃɪp/",
   "/tʃeə/",
@@ -16,12 +38,32 @@ const fixedWords = [
   "/fɪʃ/",
 ];
 
-const previewCells = [
-  "/θ/", "/ɪ/", "/n/", "/f/", "/ŋ/",
-  "/ʃ/", "/ɪ/", "/p/", "/θ/", "/n/",
-  "/tʃ/", "/eə/", "/f/", "/ɪ/", "/ŋ/",
-  "/s/", "/ɪ/", "/ŋ/", "/ʃ/", "/p/",
-  "/f/", "/ɪ/", "/ʃ/", "/tʃ/", "/eə/",
+const defaultPreviewCells = [
+  "/θ/",
+  "/ɪ/",
+  "/n/",
+  "/f/",
+  "/ŋ/",
+  "/ʃ/",
+  "/ɪ/",
+  "/p/",
+  "/θ/",
+  "/n/",
+  "/tʃ/",
+  "/eə/",
+  "/f/",
+  "/ɪ/",
+  "/ŋ/",
+  "/s/",
+  "/ɪ/",
+  "/ŋ/",
+  "/ʃ/",
+  "/p/",
+  "/f/",
+  "/ɪ/",
+  "/ʃ/",
+  "/tʃ/",
+  "/eə/",
 ];
 
 export default function WordSearchBuilder() {
@@ -31,14 +73,143 @@ export default function WordSearchBuilder() {
   const [difficulty, setDifficulty] =
     useState<Difficulty>("easy");
 
+  const [words, setWords] =
+    useState<string[]>(defaultWords);
+
+  const [previewCells, setPreviewCells] =
+    useState<string[]>(defaultPreviewCells);
+
   const [selectedIndexes, setSelectedIndexes] =
     useState<number[]>([]);
 
   const [foundWords, setFoundWords] =
     useState<string[]>([]);
 
-  const [feedback, setFeedback] =
-    useState("Select phoneme cells to preview the activity.");
+  const [feedback, setFeedback] = useState(
+    "Select phoneme cells to preview the activity.",
+  );
+
+  const [savedWordLists, setSavedWordLists] =
+    useState<SavedWordList[]>([]);
+
+  const [selectedWordListId, setSelectedWordListId] =
+    useState("");
+
+  const [databaseMessage, setDatabaseMessage] =
+    useState("");
+
+  useEffect(() => {
+    async function loadWordLists() {
+      try {
+        const response = await fetch(
+          "/api/word-lists",
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            "Unable to load word lists",
+          );
+        }
+
+        const data = await response.json();
+
+        setSavedWordLists(data);
+      } catch (error) {
+        console.error(error);
+        setDatabaseMessage(
+          "Unable to load saved word lists.",
+        );
+      }
+    }
+
+    loadWordLists();
+  }, []);
+
+  async function handleLoadSavedList() {
+    if (!selectedWordListId) {
+      setDatabaseMessage(
+        "Please select a saved word list.",
+      );
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `/api/word-lists/${selectedWordListId}`,
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          "Unable to load saved word list",
+        );
+      }
+
+      const data: SavedWordList =
+        await response.json();
+
+      if (!data.words || data.words.length === 0) {
+        setDatabaseMessage(
+          "This word list does not contain any saved words.",
+        );
+        return;
+      }
+
+      const loadedWords = data.words.map(
+        (word) => {
+          const sortedPhonemes = [
+            ...word.phonemes,
+          ].sort(
+            (a, b) =>
+              a.position - b.position,
+          );
+
+          return (
+            "/" +
+            sortedPhonemes
+              .map(
+                (phoneme) =>
+                  phoneme.symbol,
+              )
+              .join("") +
+            "/"
+          );
+        },
+      );
+
+      const loadedCells = data.words.flatMap(
+        (word) =>
+          [...word.phonemes]
+            .sort(
+              (a, b) =>
+                a.position - b.position,
+            )
+            .map(
+              (phoneme) =>
+                `/${phoneme.symbol}/`,
+            ),
+      );
+
+      setWords(loadedWords);
+      setPreviewCells(loadedCells);
+
+      setSelectedIndexes([]);
+      setFoundWords([]);
+
+      setFeedback(
+        "Select phoneme cells to preview the activity.",
+      );
+
+      setDatabaseMessage(
+        `${data.name} loaded from the database.`,
+      );
+    } catch (error) {
+      console.error(error);
+
+      setDatabaseMessage(
+        "Unable to load saved word list.",
+      );
+    }
+  }
 
   function handleCellClick(index: number) {
     setSelectedIndexes((current) => {
@@ -62,13 +233,17 @@ export default function WordSearchBuilder() {
     }
 
     const selectedWord = selectedIndexes
-      .map((index) => previewCells[index])
+      .map(
+        (index) =>
+          previewCells[index],
+      )
       .join("")
       .replaceAll("/", "");
 
-    const matchedWord = fixedWords.find(
+    const matchedWord = words.find(
       (word) =>
-        word.replaceAll("/", "") === selectedWord,
+        word.replaceAll("/", "") ===
+        selectedWord,
     );
 
     if (!matchedWord) {
@@ -99,7 +274,7 @@ export default function WordSearchBuilder() {
 
     if (
       updatedFoundWords.length ===
-      fixedWords.length
+      words.length
     ) {
       setFeedback(
         "All phoneme words found. Well done!",
@@ -107,20 +282,38 @@ export default function WordSearchBuilder() {
     } else {
       setFeedback(
         `Correct! You found ${matchedWord}. ` +
-        `${updatedFoundWords.length} of ${fixedWords.length} words found.`,
+          `${updatedFoundWords.length} of ${words.length} words found.`,
       );
     }
   }
 
   function clearSelection() {
     setSelectedIndexes([]);
-    setFeedback("Selection cleared.");
+
+    setFeedback(
+      "Selection cleared.",
+    );
   }
 
   function handleGenerate() {
+    if (!title.trim()) {
+      window.alert(
+        "Please enter an activity title.",
+      );
+      return;
+    }
+
+    if (words.length === 0) {
+      window.alert(
+        "Please load or provide at least one word.",
+      );
+      return;
+    }
+
     const settings: WordSearchSettings = {
       title,
-      words: fixedWords,
+      words,
+      phonemeCells: previewCells,
       difficulty,
     };
 
@@ -142,6 +335,62 @@ export default function WordSearchBuilder() {
         <h2 id="word-search-settings">
           Word Search settings
         </h2>
+
+        <fieldset
+          style={{
+            marginBottom: "24px",
+            padding: "16px",
+          }}
+        >
+          <legend>
+            Load saved database word list
+          </legend>
+
+          <label htmlFor="saved-word-list">
+            Saved word list
+          </label>
+
+          <select
+            id="saved-word-list"
+            value={selectedWordListId}
+            onChange={(event) =>
+              setSelectedWordListId(
+                event.target.value,
+              )
+            }
+          >
+            <option value="">
+              Select a word list
+            </option>
+
+            {savedWordLists.map(
+              (wordList) => (
+                <option
+                  key={wordList.id}
+                  value={wordList.id}
+                >
+                  {wordList.name}
+                </option>
+              ),
+            )}
+          </select>
+
+          <button
+            type="button"
+            className="button"
+            onClick={handleLoadSavedList}
+            disabled={!selectedWordListId}
+            style={{
+              marginTop: "12px",
+            }}
+          >
+            Load Saved List
+          </button>
+
+          {databaseMessage && (
+            <p>{databaseMessage}</p>
+          )}
+        </fieldset>
 
         <label htmlFor="word-search-title">
           Activity title
@@ -165,7 +414,8 @@ export default function WordSearchBuilder() {
           value={difficulty}
           onChange={(event) =>
             setDifficulty(
-              event.target.value as Difficulty,
+              event.target
+                .value as Difficulty,
             )
           }
         >
@@ -182,14 +432,18 @@ export default function WordSearchBuilder() {
           </option>
         </select>
 
-        <h3>Fixed phoneme words</h3>
+        <h3>Phoneme words</h3>
 
         <ul>
-          {fixedWords.map((word) => (
-            <li key={word}>
-              {word}
-            </li>
-          ))}
+          {words.map(
+            (word, index) => (
+              <li
+                key={`${word}-${index}`}
+              >
+                {word}
+              </li>
+            ),
+          )}
         </ul>
 
         <button
@@ -207,21 +461,20 @@ export default function WordSearchBuilder() {
       >
         <h2 id="word-search-preview">
           Live preview
-          <p>
-            TEST VERSION 2
-          </p>
         </h2>
 
         <h3>{title}</h3>
 
         <p>
-          <strong>Difficulty:</strong>{" "}
+          <strong>
+            Difficulty:
+          </strong>{" "}
           {difficulty}
         </p>
 
         <p>
-          Select the cells that form a word,
-          then check your selection.
+          Select the cells that form a
+          word, then check your selection.
         </p>
 
         <div
@@ -231,7 +484,9 @@ export default function WordSearchBuilder() {
           {previewCells.map(
             (cell, index) => {
               const selected =
-                selectedIndexes.includes(index);
+                selectedIndexes.includes(
+                  index,
+                );
 
               return (
                 <button
@@ -289,20 +544,22 @@ export default function WordSearchBuilder() {
         <h3>Words to find</h3>
 
         <ul className="preview-word-list">
-          {fixedWords.map((word) => (
-            <li
-              key={word}
-              className={
-                foundWords.includes(word)
-                  ? "found"
-                  : ""
-              }
-            >
-              {foundWords.includes(word)
-                ? `✓ ${word}`
-                : word}
-            </li>
-          ))}
+          {words.map(
+            (word, index) => (
+              <li
+                key={`${word}-${index}`}
+                className={
+                  foundWords.includes(word)
+                    ? "found"
+                    : ""
+                }
+              >
+                {foundWords.includes(word)
+                  ? `✓ ${word}`
+                  : word}
+              </li>
+            ),
+          )}
         </ul>
 
         <p
