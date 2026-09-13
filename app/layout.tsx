@@ -31,7 +31,7 @@ export default async function RootLayout({
             <div>
               <p className="site-title">Phoneme Activity Builder</p>
               <p className="site-subtitle">
-                Cloud Web Application Assessment 1
+                Cloud Web Application Assessment 2
               </p>
             </div>
 

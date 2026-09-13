@@ -8,7 +8,7 @@ export default function AboutPage() {
         learning activities for Speech Pathology students.
       </p>
 
-      <h2>Assessment 1 scope</h2>
+      <h2>Assessment 2 scope</h2>
 
       <p>
         This assessment focuses on frontend design, usability, accessibility,
