@@ -234,6 +234,10 @@ export default function ManagePage() {
       <h1>Manage Saved Content</h1>
 
       <p>
+        <a href="/manage/activities">Manage Activity Settings →</a>
+      </p>
+
+      <p>
         Create phoneme-based word lists and manage saved words for Wordle and
         Word Search activities.
       </p>

@@ -584,3 +584,9 @@ select:focus-visible {
   font-size: 1.25rem;
   font-weight: 700;
 }
+
+select,
+select option {
+  color: #111;
+  background-color: #fff;
+}
