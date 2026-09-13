@@ -591,10 +591,10 @@ select option {
   background-color: #fff;
 }
 
-input,
-textarea {
-  width: 100%;
-  max-width: 100%;
+input[type="checkbox"],
+input[type="radio"] {
+  width: auto;
+  max-width: none;
 }
 
 select {

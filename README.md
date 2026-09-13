@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Speech Activity Builder – Assessment 2
 
-## Getting Started
+## Overview
 
-First, run the development server:
+Speech Activity Builder is a Next.js application for creating phoneme-based
+learning activities for Speech Pathology teaching and practice.
+
+Assessment 2 extends the original frontend application with a backend,
+persistent database storage, CRUD operations, validation, API routes and
+Docker support.
+
+## Technologies
+
+- Next.js
+- React
+- TypeScript
+- Prisma ORM 7
+- SQLite
+- Zod
+- Docker
+
+## Features
+
+- Create and manage word lists
+- Create, read, update and delete words
+- Store ordered phonemes
+- Support multi-character phonemes such as əʊ
+- Store word hints
+- Create and manage activity configurations
+- Load saved words into the Wordle builder
+- Load saved word lists into the Word Search builder
+- Generate standalone HTML activities
+- Backend validation using Zod
+- Health-check endpoint
+- Docker container support
+- Persistent SQLite storage using a Docker volume
+
+## Database
+
+The Prisma schema contains four main models:
+
+- WordList
+- Word
+- Phoneme
+- Activity
+
+Words belong to word lists and each word can contain multiple ordered phonemes.
+
+Activity records store configuration including activity type, difficulty,
+hints, grid size, timer settings, output filename and associated word list.
+
+## Local Setup
+
+Install dependencies:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+npm install

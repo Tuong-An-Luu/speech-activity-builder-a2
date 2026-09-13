@@ -32,7 +32,7 @@ export default function HomePage() {
           <h2>Phoneme Word Search</h2>
 
           <p>
-            Create a classroom activity using five fixed phoneme-based words.
+            Create a classroom activity using phoneme-based words.
           </p>
 
           <Link className="button home-link" href="/word-search">
