@@ -9,6 +9,10 @@ Assessment 2 extends the original frontend application with a backend,
 persistent database storage, CRUD operations, validation, API routes and
 Docker support.
 
+## GitHub Repository
+
+Repository: https://github.com/Tuong-An-Luu/speech-activity-builder-a2
+
 ## Technologies
 
 - Next.js
