@@ -395,7 +395,13 @@ export default function DashboardPage() {
                     </td>
 
                     <td className="px-4 py-3">
-                      {event.message ?? "—"}
+                      <div>{event.message ?? "—"}</div>
+
+                      {event.durationMs !== null && (
+                        <div className="mt-1 text-sm opacity-70">
+                          Duration: {formatDuration(event.durationMs)}
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))
