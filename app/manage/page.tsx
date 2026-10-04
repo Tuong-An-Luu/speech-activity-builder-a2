@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
+import PageTimeTracker from "../../components/PageTimeTracker";
 
 type Phoneme = {
   id: number;
@@ -231,6 +232,8 @@ export default function ManagePage() {
         padding: "20px",
       }}
     >
+      <PageTimeTracker pagePath="/manage" />
+      
       <h1>Manage Saved Content</h1>
 
       <p>
