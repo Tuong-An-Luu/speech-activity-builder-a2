@@ -1,10 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 import PhonemeHint from "./PhonemeHint";
+
 import type { WordleSettings } from "../types/games";
+
 import { downloadHtmlFile } from "../utils/downloadFile";
+
 import { generateWordleHtml } from "../utils/generateWordleHtml";
+
+import { recordUsageEvent } from "../lib/usage";
 
 type SavedPhoneme = {
   id: number;
@@ -59,10 +65,14 @@ export default function WordleBuilder() {
   useEffect(() => {
     async function loadWordLists() {
       try {
-        const response = await fetch("/api/word-lists");
+        const response = await fetch(
+          "/api/word-lists",
+        );
 
         if (!response.ok) {
-          throw new Error("Unable to load word lists");
+          throw new Error(
+            "Unable to load word lists",
+          );
         }
 
         const data = await response.json();
@@ -70,6 +80,7 @@ export default function WordleBuilder() {
         setSavedWordLists(data);
       } catch (error) {
         console.error(error);
+
         setDatabaseMessage(
           "Unable to load saved word lists.",
         );
@@ -97,7 +108,9 @@ export default function WordleBuilder() {
       );
 
       if (!response.ok) {
-        throw new Error("Unable to load word list");
+        throw new Error(
+          "Unable to load word list",
+        );
       }
 
       const data: SavedWordList =
@@ -105,13 +118,17 @@ export default function WordleBuilder() {
 
       setSavedWords(data.words || []);
 
-      if (!data.words || data.words.length === 0) {
+      if (
+        !data.words ||
+        data.words.length === 0
+      ) {
         setDatabaseMessage(
           "This word list does not contain any saved words.",
         );
       }
     } catch (error) {
       console.error(error);
+
       setDatabaseMessage(
         "Unable to load saved words.",
       );
@@ -128,6 +145,7 @@ export default function WordleBuilder() {
       setDatabaseMessage(
         "Please select a saved word.",
       );
+
       return;
     }
 
@@ -135,9 +153,12 @@ export default function WordleBuilder() {
       "/" +
       [...selectedWord.phonemes]
         .sort(
-          (a, b) => a.position - b.position,
+          (a, b) =>
+            a.position - b.position,
         )
-        .map((phoneme) => phoneme.symbol)
+        .map(
+          (phoneme) => phoneme.symbol,
+        )
         .join("") +
       "/";
 
@@ -165,24 +186,61 @@ export default function WordleBuilder() {
     }));
   }
 
-  function handleGenerate() {
+  async function handleGenerate() {
     if (
       !settings.title.trim() ||
       !settings.phonemeWord.trim() ||
       !settings.englishWord.trim()
     ) {
+      await recordUsageEvent({
+        eventType: "GENERATION_FAILURE",
+        activityType: "WORDLE",
+        pagePath: "/wordle",
+        message:
+          "Wordle generation failed because required data was missing.",
+      });
+
       window.alert(
         "Please enter an activity title, phoneme word and English equivalent.",
       );
+
       return;
     }
 
-    const html = generateWordleHtml(settings);
+    try {
+      const html =
+        generateWordleHtml(settings);
 
-    downloadHtmlFile(
-      html,
-      "phoneme-wordle.html",
-    );
+      downloadHtmlFile(
+        html,
+        "phoneme-wordle.html",
+      );
+
+      await recordUsageEvent({
+        eventType: "GENERATION_SUCCESS",
+        activityType: "WORDLE",
+        pagePath: "/wordle",
+        message:
+          "Wordle activity generated successfully.",
+      });
+    } catch (error) {
+      console.error(
+        "Wordle generation failed:",
+        error,
+      );
+
+      await recordUsageEvent({
+        eventType: "GENERATION_FAILURE",
+        activityType: "WORDLE",
+        pagePath: "/wordle",
+        message:
+          "Wordle activity generation failed.",
+      });
+
+      window.alert(
+        "Unable to generate the Wordle activity.",
+      );
+    }
   }
 
   return (
@@ -267,7 +325,9 @@ export default function WordleBuilder() {
             className="button"
             onClick={handleLoadSavedWord}
             disabled={!selectedWordId}
-            style={{ marginTop: "12px" }}
+            style={{
+              marginTop: "12px",
+            }}
           >
             Load Saved Word
           </button>
@@ -428,7 +488,9 @@ export default function WordleBuilder() {
         <h3>{settings.title}</h3>
 
         <p>
-          <strong>Phoneme word:</strong>{" "}
+          <strong>
+            Phoneme word:
+          </strong>{" "}
           {settings.phonemeWord}
         </p>
 
@@ -440,21 +502,29 @@ export default function WordleBuilder() {
         </p>
 
         <p>
-          <strong>Hint:</strong>{" "}
+          <strong>
+            Hint:
+          </strong>{" "}
           {settings.hint}
         </p>
 
         <p>
-          <strong>Difficulty:</strong>{" "}
+          <strong>
+            Difficulty:
+          </strong>{" "}
           {settings.difficulty}
         </p>
 
         <p>
-          <strong>Attempts:</strong>{" "}
+          <strong>
+            Attempts:
+          </strong>{" "}
           {settings.attempts}
         </p>
 
-        <h3>Example phoneme label</h3>
+        <h3>
+          Example phoneme label
+        </h3>
 
         <PhonemeHint
           symbol="/θ/"

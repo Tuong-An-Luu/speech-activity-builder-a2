@@ -1,12 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 import type {
   Difficulty,
   WordSearchSettings,
 } from "../types/games";
+
 import { downloadHtmlFile } from "../utils/downloadFile";
+
 import { generateWordSearchHtml } from "../utils/generateWordSearchHtml";
+
+import { recordUsageEvent } from "../lib/usage";
 
 type SavedPhoneme = {
   id: number;
@@ -111,11 +116,13 @@ export default function WordSearchBuilder() {
           );
         }
 
-        const data = await response.json();
+        const data =
+          await response.json();
 
         setSavedWordLists(data);
       } catch (error) {
         console.error(error);
+
         setDatabaseMessage(
           "Unable to load saved word lists.",
         );
@@ -130,6 +137,7 @@ export default function WordSearchBuilder() {
       setDatabaseMessage(
         "Please select a saved word list.",
       );
+
       return;
     }
 
@@ -147,15 +155,19 @@ export default function WordSearchBuilder() {
       const data: SavedWordList =
         await response.json();
 
-      if (!data.words || data.words.length === 0) {
+      if (
+        !data.words ||
+        data.words.length === 0
+      ) {
         setDatabaseMessage(
           "This word list does not contain any saved words.",
         );
+
         return;
       }
 
-      const loadedWords = data.words.map(
-        (word) => {
+      const loadedWords =
+        data.words.map((word) => {
           const sortedPhonemes = [
             ...word.phonemes,
           ].sort(
@@ -173,21 +185,22 @@ export default function WordSearchBuilder() {
               .join("") +
             "/"
           );
-        },
-      );
+        });
 
-      const loadedCells = data.words.flatMap(
-        (word) =>
-          [...word.phonemes]
-            .sort(
-              (a, b) =>
-                a.position - b.position,
-            )
-            .map(
-              (phoneme) =>
-                `/${phoneme.symbol}/`,
-            ),
-      );
+      const loadedCells =
+        data.words.flatMap(
+          (word) =>
+            [...word.phonemes]
+              .sort(
+                (a, b) =>
+                  a.position -
+                  b.position,
+              )
+              .map(
+                (phoneme) =>
+                  `/${phoneme.symbol}/`,
+              ),
+        );
 
       setWords(loadedWords);
       setPreviewCells(loadedCells);
@@ -211,7 +224,9 @@ export default function WordSearchBuilder() {
     }
   }
 
-  function handleCellClick(index: number) {
+  function handleCellClick(
+    index: number,
+  ) {
     setSelectedIndexes((current) => {
       if (current.includes(index)) {
         return current.filter(
@@ -225,20 +240,24 @@ export default function WordSearchBuilder() {
   }
 
   function checkSelection() {
-    if (selectedIndexes.length === 0) {
+    if (
+      selectedIndexes.length === 0
+    ) {
       setFeedback(
         "Select some phoneme cells first.",
       );
+
       return;
     }
 
-    const selectedWord = selectedIndexes
-      .map(
-        (index) =>
-          previewCells[index],
-      )
-      .join("")
-      .replaceAll("/", "");
+    const selectedWord =
+      selectedIndexes
+        .map(
+          (index) =>
+            previewCells[index],
+        )
+        .join("")
+        .replaceAll("/", "");
 
     const matchedWord = words.find(
       (word) =>
@@ -252,15 +271,19 @@ export default function WordSearchBuilder() {
       );
 
       setSelectedIndexes([]);
+
       return;
     }
 
-    if (foundWords.includes(matchedWord)) {
+    if (
+      foundWords.includes(matchedWord)
+    ) {
       setFeedback(
         `${matchedWord} has already been found.`,
       );
 
       setSelectedIndexes([]);
+
       return;
     }
 
@@ -269,7 +292,10 @@ export default function WordSearchBuilder() {
       matchedWord,
     ];
 
-    setFoundWords(updatedFoundWords);
+    setFoundWords(
+      updatedFoundWords,
+    );
+
     setSelectedIndexes([]);
 
     if (
@@ -295,35 +321,82 @@ export default function WordSearchBuilder() {
     );
   }
 
-  function handleGenerate() {
+  async function handleGenerate() {
     if (!title.trim()) {
+      await recordUsageEvent({
+        eventType: "GENERATION_FAILURE",
+        activityType: "WORD_SEARCH",
+        pagePath: "/word-search",
+        message:
+          "Word Search generation failed because the activity title was missing.",
+      });
+
       window.alert(
         "Please enter an activity title.",
       );
+
       return;
     }
 
     if (words.length === 0) {
+      await recordUsageEvent({
+        eventType: "GENERATION_FAILURE",
+        activityType: "WORD_SEARCH",
+        pagePath: "/word-search",
+        message:
+          "Word Search generation failed because no words were available.",
+      });
+
       window.alert(
         "Please load or provide at least one word.",
       );
+
       return;
     }
 
-    const settings: WordSearchSettings = {
-      title,
-      words,
-      phonemeCells: previewCells,
-      difficulty,
-    };
+    try {
+      const settings: WordSearchSettings = {
+        title,
+        words,
+        phonemeCells: previewCells,
+        difficulty,
+      };
 
-    const html =
-      generateWordSearchHtml(settings);
+      const html =
+        generateWordSearchHtml(
+          settings,
+        );
 
-    downloadHtmlFile(
-      html,
-      "phoneme-word-search.html",
-    );
+      downloadHtmlFile(
+        html,
+        "phoneme-word-search.html",
+      );
+
+      await recordUsageEvent({
+        eventType: "GENERATION_SUCCESS",
+        activityType: "WORD_SEARCH",
+        pagePath: "/word-search",
+        message:
+          "Word Search activity generated successfully.",
+      });
+    } catch (error) {
+      console.error(
+        "Word Search generation failed:",
+        error,
+      );
+
+      await recordUsageEvent({
+        eventType: "GENERATION_FAILURE",
+        activityType: "WORD_SEARCH",
+        pagePath: "/word-search",
+        message:
+          "Word Search activity generation failed.",
+      });
+
+      window.alert(
+        "Unable to generate the Word Search activity.",
+      );
+    }
   }
 
   return (
@@ -401,7 +474,9 @@ export default function WordSearchBuilder() {
           type="text"
           value={title}
           onChange={(event) =>
-            setTitle(event.target.value)
+            setTitle(
+              event.target.value,
+            )
           }
         />
 
@@ -432,7 +507,9 @@ export default function WordSearchBuilder() {
           </option>
         </select>
 
-        <h3>Phoneme words</h3>
+        <h3>
+          Phoneme words
+        </h3>
 
         <ul>
           {words.map(
@@ -499,7 +576,9 @@ export default function WordSearchBuilder() {
                   key={`${cell}-${index}`}
                   aria-pressed={selected}
                   onClick={() =>
-                    handleCellClick(index)
+                    handleCellClick(
+                      index,
+                    )
                   }
                 >
                   {cell}
@@ -513,12 +592,15 @@ export default function WordSearchBuilder() {
           <strong>
             Current selection:
           </strong>{" "}
-          {selectedIndexes.length === 0
+          {selectedIndexes.length ===
+          0
             ? "None"
             : selectedIndexes
                 .map(
                   (index) =>
-                    previewCells[index],
+                    previewCells[
+                      index
+                    ],
                 )
                 .join(" ")}
         </p>
@@ -541,7 +623,9 @@ export default function WordSearchBuilder() {
           </button>
         </div>
 
-        <h3>Words to find</h3>
+        <h3>
+          Words to find
+        </h3>
 
         <ul className="preview-word-list">
           {words.map(
@@ -549,12 +633,16 @@ export default function WordSearchBuilder() {
               <li
                 key={`${word}-${index}`}
                 className={
-                  foundWords.includes(word)
+                  foundWords.includes(
+                    word,
+                  )
                     ? "found"
                     : ""
                 }
               >
-                {foundWords.includes(word)
+                {foundWords.includes(
+                  word,
+                )
                   ? `✓ ${word}`
                   : word}
               </li>
