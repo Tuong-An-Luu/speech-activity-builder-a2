@@ -45,3 +45,7 @@ next-env.d.ts
 *.db
 *.db-journal
 /generated/prisma
+
+playwright-report/
+test-results/
+blob-report/
