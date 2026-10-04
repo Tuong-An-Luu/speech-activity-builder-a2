@@ -9,6 +9,8 @@ const links = [
   { href: "/wordle", label: "Wordle" },
   { href: "/word-search", label: "Word Search" },
   { href: "/manage", label: "Manage" },
+  { href: "/dashboard", label: "Dashboard" },
+  { href: "/reports", label: "Reports" },
   { href: "/about", label: "About" },
   { href: "/settings", label: "Settings" },
 ];
